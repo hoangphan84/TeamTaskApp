@@ -1,64 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+// import { hot } from "react-hot-loader";
 import TaskItem from "./components/TaskItem";
 import AddTask from "./components/AddTask";
-import { getTasks, addTask, updateTask, deleteTask } from "./ApiService";
 
-const App = () => {
-  const [tasks, setTasks] = useState<ITask[]>([]);
-
+const App = (props: any) => {
   useEffect(() => {
-    fetchTasks();
+    props.dispatch({ type: "FETCH_TASKS" });
   }, []);
 
-  const fetchTasks = (): void => {
-    getTasks()
-      .then((res) => (res.status === 200 ? res.json() : null))
-      .then(({ tasks }: ITask[] | any) => setTasks(tasks))
-      .catch((err: Error) => console.log(err));
-  };
-
-  const handleUpdateTask = (task: ITask): void => {
-    updateTask(task)
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error("Error! Task not updated");
-        }
-        return res.json();
-      })
-      .then((data) => setTasks(data.tasks))
-      .catch((err) => console.log(err));
+  const handleUpdateTask = (task: ITask) => {
+    props.dispatch({ type: "UPDATE_TASK", task });
   };
 
   const handleDeleteTask = (_id: string): void => {
-    deleteTask(_id)
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error("Error! Task not deleted");
-        }
-        return res.json();
-      })
-      .then((data) => setTasks(data.tasks))
-      .catch((err) => console.log(err));
+    props.dispatch({ type: "DELETE_TASK", id: _id });
   };
 
-  const handleSaveTask = (e: React.FormEvent, description: string): void => {
+  const handleAddTask = (e: React.FormEvent, description: string): void => {
     e.preventDefault();
-    addTask(description)
-      .then((res) => {
-        if (res.status !== 201) {
-          throw new Error("Error! Todo not saved");
-        }
-        return res.json();
-      })
-      .then((data) => setTasks(data.tasks))
-      .catch((err) => console.log(err));
+    props.dispatch({ type: "ADD_TASK", description });
   };
 
   return (
     <main className="App">
       <h1>Tasks</h1>
-      <AddTask saveTask={handleSaveTask} />
-      {tasks.map((task: ITask) => (
+      <AddTask saveTask={handleAddTask} />
+      {props.tasks.map((task: ITask) => (
         <TaskItem
           key={task._id}
           updateTask={handleUpdateTask}
@@ -70,4 +38,10 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = (state: any) => {
+  return {
+    tasks: state.tasks,
+  };
+};
+
+export default connect(mapStateToProps)(App);
