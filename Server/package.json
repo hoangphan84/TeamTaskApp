@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\"",
-    "start-inspect": "concurrently \"tsc -w\" \"nodemon --inspect dist/js/app.js \""
+    "start-debug": "concurrently \"tsc -w\" \"nodemon --inspect dist/js/app.js \""
   },
   "dependencies": {
     "body-parser": "^1.19.0",
