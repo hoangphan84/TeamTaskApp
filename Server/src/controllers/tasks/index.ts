@@ -13,7 +13,7 @@ const getTasks = async (req: Request, res: Response): Promise<void> => {
 
 const addTask = async (req: Request, res: Response): Promise<void> => {
   try {
-    const body = req.body as Pick<ITask, 'description' | 'status'>;
+    const body = req.body;
 
     const task: ITask = new Task({
       description: body.description,
@@ -37,6 +37,7 @@ const updateTask = async (req: Request, res: Response): Promise<void> => {
       params: { id },
       body,
     } = req;
+    debugger
     const updateTask: ITask | null = await Task.findByIdAndUpdate(
       { _id: id },
       body
