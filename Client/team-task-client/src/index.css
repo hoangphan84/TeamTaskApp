@@ -15,6 +15,7 @@ body {
 .App {
   max-width: 728px;
   margin: 2rem auto;
+  margin-bottom: 5rem
 }
 
 .App > h1 {

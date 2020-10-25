@@ -31,9 +31,9 @@ const Form = styled.div`
   z-index: 100;
   blur: ${(props) => (props.itemType === "add-big" ? "5px" : "")};
   width: 100%;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
   height: ${(props) => (props.itemType === "add-big" ? "4.5rem" : "")};
-  right: 0;
+  right: -5px;
 `;
 
 const AddTask: React.FC<Props> = ({ saveTask }) => {

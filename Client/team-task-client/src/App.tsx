@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import TaskItem from "./components/TaskItem";
 import AddTask from "./components/AddTask";
 import FlipMove from "react-flip-move";
+import styled from "styled-components";
 
 const App = (props: any) => {
   useEffect(() => {
@@ -21,6 +22,10 @@ const App = (props: any) => {
   const handleAddTask = (description: string): void => {
     props.dispatch({ type: "ADD_TASK", description });
   };
+
+  const Footer = styled.div`
+    height: 4em;
+  `;
 
   return (
     <main className="App">
