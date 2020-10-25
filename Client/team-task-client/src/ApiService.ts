@@ -1,4 +1,7 @@
-const baseUrl: string = "http://localhost:4000";
+const baseUrl: string =
+  process.env.NODE_ENV === "production"
+    ? "https://teamtaskappserver.azurewebsites.net"
+    : "http://localhost:4000";
 
 export const getTasks = (): Promise<Response> => {
   try {
