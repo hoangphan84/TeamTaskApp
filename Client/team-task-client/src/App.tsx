@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 // import { hot } from "react-hot-loader";
 import TaskItem from "./components/TaskItem";
 import AddTask from "./components/AddTask";
+import FlipMove from "react-flip-move";
 
 const App = (props: any) => {
   useEffect(() => {
@@ -17,25 +18,60 @@ const App = (props: any) => {
     props.dispatch({ type: "DELETE_TASK", id: _id });
   };
 
-  const handleAddTask = (e: React.FormEvent, description: string): void => {
-    e.preventDefault();
+  const handleAddTask = (description: string): void => {
     props.dispatch({ type: "ADD_TASK", description });
   };
 
   return (
     <main className="App">
-      <h1>Tasks</h1>
+      <h1>Team Tasks</h1>
       <AddTask saveTask={handleAddTask} />
-      {props.tasks.map((task: ITask) => (
-        <TaskItem
-          key={task._id}
-          updateTask={handleUpdateTask}
-          deleteTask={handleDeleteTask}
-          task={task}
-        />
-      ))}
+      <FlipMove>
+        {sortTasks(props.tasks).map((task: ITask) => (
+          <TaskItem
+            key={task._id}
+            updateTask={handleUpdateTask}
+            deleteTask={handleDeleteTask}
+            task={task}
+          />
+        ))}
+      </FlipMove>
     </main>
   );
+};
+
+const sortTasks = (tasks: ITask[]) => {
+  const incompletedTasks = tasks
+    .filter((task) => task.status !== "completed")
+    .sort((a, b) => {
+      const task1Created = a.createdAt;
+      const task2Created = b.createdAt;
+      if (task1Created && task2Created) {
+        if (task1Created < task2Created) {
+          return -1;
+        }
+        if (task1Created > task2Created) {
+          return 1;
+        }
+      }
+      return 0;
+    });
+  const completedtasks = tasks
+    .filter((task) => task.status === "completed")
+    .sort((a, b) => {
+      const task1Updated = a.updatedAt;
+      const task2Updated = b.updatedAt;
+      if (task1Updated && task2Updated) {
+        if (task1Updated < task2Updated) {
+          return 1;
+        }
+        if (task1Updated > task2Updated) {
+          return -1;
+        }
+      }
+      return 0;
+    });
+  return incompletedTasks.concat(completedtasks);
 };
 
 const mapStateToProps = (state: any) => {

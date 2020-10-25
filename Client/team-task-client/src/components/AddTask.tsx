@@ -1,56 +1,86 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { ActionButton } from "./ActionButton";
 
-type Props = {
-  saveTask: (e: React.FormEvent, formData: ITask | any) => void;
-};
+export interface Props {
+  saveTask: (formData: string) => void;
+}
 
 const Input = styled.input`
   background: #f5f6f7;
   padding: 0.5rem 1rem;
   border: 1px solid #ff9900;
-  border-radius: 10px;
+  border-radius: 20px;
   display: block;
   margin: 0.3rem 1rem 0 0;
+  width: 100%;
+  height: 2.8rem;
+  font-size: 24px;
+  outline: none;
 `;
 
-const FormButton = styled.button`
-  background: #ff9900;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  cursor: pointer;
-  border: none;
-`;
-
-const Form = styled.form`
+const Form = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: ${(props) =>
+    props.itemType === "add-big" ? "1rem" : "1rem 1.6rem 1rem 1rem"};
+  margin-bottom: ${(props) => (props.itemType === "add-big" ? "0rem" : "1rem")};
+  justify-content: center;
+  position: ${(props) => (props.itemType === "add-big" ? "fixed" : "")};
+  bottom: ${(props) => (props.itemType === "add-big" ? "0" : "")};
+  z-index: 100;
+  blur: ${(props) => (props.itemType === "add-big" ? "5px" : "")};
+  width: 100%;
+  backdrop-filter: blur(2px);
+  height: ${(props) => (props.itemType === "add-big" ? "4.5rem" : "")};
+  right: 0;
 `;
-
-export interface FormProps {
-  onSubmit: (e: any) => void;
-}
-
-const AddTaskForm: React.FC<FormProps> = (props) => {
-  return <Form {...props}></Form>;
-};
 
 const AddTask: React.FC<Props> = ({ saveTask }) => {
   const [description, setDescription] = useState<string>("");
+  const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
 
-  const handleForm = (e: React.FormEvent<HTMLInputElement>): void => {
+  const handleForm = (e: React.FormEvent<HTMLInputElement>) => {
     setDescription(e.currentTarget.value);
   };
 
-  return (
-    <AddTaskForm onSubmit={(e) => saveTask(e, description)}>
-      <Input onChange={handleForm} type="text" id="description" />
-      <FormButton disabled={!description}>Add Task</FormButton>
-    </AddTaskForm>
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      saveTaskAction();
+    }
+  };
+
+  const saveTaskAction = () => {
+    saveTask(description);
+    setDescription("");
+    setIsAddingTask(false);
+  };
+
+  return isAddingTask ? (
+    <Form>
+      <Input
+        onChange={handleForm}
+        type="text"
+        id="description"
+        value={description}
+        onKeyUp={handleKeyPress}
+      />
+      <ActionButton
+        type="add"
+        onClick={() => {
+          saveTaskAction();
+        }}
+      ></ActionButton>
+    </Form>
+  ) : (
+    <Form itemType="add-big">
+      <ActionButton
+        type="add-big"
+        onClick={() => {
+          setIsAddingTask(true);
+        }}
+      ></ActionButton>
+    </Form>
   );
 };
 
